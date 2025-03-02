@@ -23,27 +23,24 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@Valid @RequestBody RegistrationBody registerBody){
-
+    public ResponseEntity registerUser(@Valid @RequestBody RegistrationBody registrationBody) {
         try {
-            userService.registerUser(registerBody);
+            userService.registerUser(registrationBody);
             return ResponseEntity.ok().build();
-        } catch (UserAlreadyExistsException e) {
+        } catch (UserAlreadyExistsException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity loginUser(@Valid @RequestBody LoginBody loginBody){
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginBody loginBody) {
         String jwt = userService.loginUser(loginBody);
-
-        if(jwt == null){
+        if (jwt == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else{
-
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setJwt(jwt);
-            return ResponseEntity.ok(loginResponse);
+        } else {
+            LoginResponse response = new LoginResponse();
+            response.setJwt(jwt);
+            return ResponseEntity.ok(response);
         }
     }
 
